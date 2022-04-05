@@ -141,7 +141,6 @@ a {
 
 <script>
 import Message from '@/components/Message.vue';
-import * as queries from '@/plugins/queries';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
@@ -182,8 +181,6 @@ export default {
         },
     },
     mounted() {
-        if (this.storeEntities.length === 0)
-            queries.fetchUpdateStoreEntities();
         this.setTableHeight();
         this.$refs.entitySearch.$refs.input.focus();
         window.addEventListener('resize', this.setTableHeight);
