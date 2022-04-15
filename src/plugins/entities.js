@@ -3,7 +3,8 @@ import store from '@/store';
 
 export default {
     /**
-     * Fetch entities from the API and update the store.
+     * Fetch entities from the API and store them.
+     * @async
      */
     async fetchStoreEntities() {
         await Api.get('/entities')
@@ -12,7 +13,8 @@ export default {
                 store.commit('EDIT_STORE_INFO_MESSAGE', {});
             })
             .catch((error) => {
-                console.log(error);
+                console.log('Error fetching entities :', error);
+
                 store.commit('EDIT_STORE_INFO_MESSAGE', {
                     type: 'error',
                     content: 'Can not retrieve entities. Problem with query.',
@@ -20,13 +22,4 @@ export default {
                 });
             });
     },
-    /**
-     * Initialise the plugin and fetch entities if the store is empty.
-     */
-    async init() {
-        const storeEntities = store.getters.storeEntities;
-
-        if (storeEntities.length === 0)
-            await this.fetchStoreEntities();
-    }
 };
