@@ -31,7 +31,6 @@ export function copyToClipboard(textToCopy) {
 }
 
 /**
- *
  * Transform an input that can be an array into a litteral value
  * If it's an array, return the first value of the array
  * @param {any} input - The value to check
@@ -41,6 +40,88 @@ export function unArray(input) {
     return Array.isArray(input) ? input[0] : input;
 }
 
+/**
+ * Check if an object is empty or not
+ * @param {object} object - The object to check
+ * @returns {boolean} - True if the object is empty, false otherwise
+ */
 export function isEmptyObject(object) {
     return Object.keys(object).length === 0;
+}
+
+/**
+ * Generate a working route or href for a device
+ * @param {string} deviceId - The id of the device to generate the route for
+ * @param {string} type - The type of the device
+ * @param {object} routeObject - The base route object to use to create the route
+ * @param {boolean} raw - If true, will return the raw url to the device, otherwise will return a complete route object
+ * @param {object} routerInstance - Optional, only used if "raw", the router instance to use to resolve the url
+ * @returns {*} - The generated route or link
+ */
+export function getDeviceRoute(deviceId, type, routeObject, raw, routerInstance = null) {
+    const query = routeObject.query;
+    const params = { ...routeObject.params };
+    params.id = deviceId;
+
+    const deviceRoute = {
+        name: type === 'switch' ? 'ViewSwitch' : 'ViewHost',
+        params,
+        query,
+    };
+
+    if (raw) {
+        return routerInstance.resolve(deviceRoute).href;
+    } else {
+        return deviceRoute;
+    }
+}
+
+/**
+ * Generate an updated API URL for fetching ata
+ * @param {object} stateParams - The state params to use to generate the URL
+ * @param {string} type - The type of the data to fetch
+ * @returns {string} - The generated API URL
+ */
+export function getUpdatedApiUrl(stateParams, type) {
+    let url = '';
+
+    if (stateParams.entity && stateParams.database) {
+        url += '/entity/' + encodeURIComponent(stateParams.entity);
+
+        switch (type) {
+            case 'fdb':
+                url += '/fdb?q=' + encodeURIComponent(stateParams.search);
+                break;
+            case 'devices':
+                url += '/devices?q=' + encodeURIComponent(stateParams.search) + '&short';
+                break;
+            case 'device':
+                url += '/devices?id=' + encodeURIComponent(stateParams.id);
+                break;
+            case 'interface':
+                url += '/interfaces?id=' + encodeURIComponent(stateParams.id);
+                break;
+            case 'vlans':
+                url += '/vlans?';
+                break;
+        }
+
+        url += '&database=' + encodeURIComponent(stateParams.database);
+    }
+
+    return url;
+}
+
+/**
+ * Generate an anchor tag with the given text and href
+ * @param {string} deviceId - The id of the device
+ * @param {string} label - The text to display in the anchor
+ * @param {string} type - The type of the device
+ * @param {object} routeObject - The base route object to use to create the route
+ * @param {object} routerInstance - The router instance to use to generate the route
+ * @returns {string} - The generated anchor tag
+ */
+export function generateDeviceAnchorLink(deviceId, label, type, routeObject, routerInstance) {
+    const link = getDeviceRoute(deviceId, type, routeObject, true, routerInstance);
+    return ` <a href="${link}">${label}</a> `;
 }
