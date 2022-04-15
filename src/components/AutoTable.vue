@@ -120,7 +120,6 @@ tbody .v-data-table__divider span {
 
 <script>
 import { VDataTable } from 'vuetify/lib';
-import { copyToClipboard, unArray } from '@/plugins/utils';
 
 const defaultColumnDefinition = {
     format: (v) => v,
@@ -189,7 +188,7 @@ export default {
             const headers = [];
 
             // Store every unique header key
-            this.tableItems.forEach((item) => {
+            this.tableItems?.forEach((item) => {
                 Object.keys(item).forEach((key) => {
                     if (!headers.some((header) => header.value === key)) {
                         headers.push({ value: key });
@@ -224,7 +223,7 @@ export default {
             return headers;
         },
         formattedTableItems() {
-            return this.tableItems.map((item, index) => ({
+            return this.tableItems?.map((item, index) => ({
                 id: index,
                 ...item,
             }));
@@ -250,16 +249,16 @@ export default {
         /**
          * Fetch the data to display in a table from the API
          */
-        fetchTableItems() {
+        async fetchTableItems() {
             this.isLoading = true;
 
-            this.$api
+            await this.$api
                 .get(this.$props.api)
                 .then((response) => {
                     const path = this.$props.arrayData.split('.');
                     let tableData = response.data;
 
-                    if (unArray(path) !== '') {
+                    if (this.$utils.unArray(path) !== '') {
                         for (let i = 0; i < path.length; i++) {
                             if (tableData[path[i]]) {
                                 tableData = tableData[path[i]];
@@ -268,7 +267,7 @@ export default {
                                 break;
                             }
                         }
-                        if (tableData === null) {
+                        if (tableData === []) {
                             this.$emit('error', 'Error occurs in data path.');
                         }
                     }
@@ -291,10 +290,11 @@ export default {
             return header.columnDefinition.getClass(tableItem) + ' v-data-table__divider col_' + header.value;
         },
         setTableHeight() {
-            if (this.$props.height === 'auto')
+            if (this.$props.height === 'auto') {
                 this.tableHeight = this.computeAutoTableHeight();
-            else if (this.$props.height)
+            } else if (this.$props.height) {
                 this.tableHeight = this.$props.height;
+            }
         },
         computeAutoTableHeight() {
             let tableHeight = 0;
@@ -336,12 +336,14 @@ export default {
          * @param {number} rowIndex - Row index starting from 0
          */
         copyCellContent(rootId, colIndex, rowIndex) {
-            const selector = `#${rootId} tbody > tr:nth-child(${rowIndex+1}) > td:nth-child(${colIndex+1})`;
+            const selector = `#${rootId} tbody > tr:nth-child(${rowIndex + 1}) > td:nth-child(${colIndex + 1})`;
             const elementToCopy = document.querySelector(selector);
-            if (!elementToCopy || elementToCopy.innerText === undefined)
-                return; /* not found */
 
-            copyToClipboard(elementToCopy.innerText).then(() => {
+            if (!elementToCopy || elementToCopy.innerText === undefined) {
+                return; /* not found */
+            }
+
+            this.$utils.copyToClipboard(elementToCopy.innerText).then(() => {
                 const tooltipElement = elementToCopy.querySelector('.cp-span:hover .cell-copied-tooltip');
                 if (tooltipElement) {
                     tooltipElement.style = 'visibility:visible;';
