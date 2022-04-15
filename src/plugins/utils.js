@@ -84,16 +84,17 @@ export function getDeviceRoute(deviceId, type, routeObject, raw, routerInstance 
  */
 export function getUpdatedApiUrl(stateParams, type) {
     let url = '';
+    const search = stateParams.search || '';
 
     if (stateParams.entity && stateParams.database) {
         url += '/entity/' + encodeURIComponent(stateParams.entity);
 
         switch (type) {
             case 'fdb':
-                url += '/fdb?q=' + encodeURIComponent(stateParams.search);
+                url += '/fdb?q=' + encodeURIComponent(search);
                 break;
             case 'devices':
-                url += '/devices?q=' + encodeURIComponent(stateParams.search) + '&short';
+                url += '/devices?q=' + encodeURIComponent(search) + '&short';
                 break;
             case 'device':
                 url += '/devices?id=' + encodeURIComponent(stateParams.id);
