@@ -34,7 +34,7 @@ export function copyToClipboard(textToCopy) {
  * Transform an input that can be an array into a litteral value
  * If it's an array, return the first value of the array
  * @param {any} input - The value to check
- * @returns {any}
+ * @return {any}
  */
 export function unArray(input) {
     return Array.isArray(input) ? input[0] : input;
@@ -43,7 +43,7 @@ export function unArray(input) {
 /**
  * Check if an object is empty or not
  * @param {object} object - The object to check
- * @returns {boolean} - True if the object is empty, false otherwise
+ * @return {boolean} - True if the object is empty, false otherwise
  */
 export function isEmptyObject(object) {
     return Object.keys(object).length === 0;
@@ -56,7 +56,7 @@ export function isEmptyObject(object) {
  * @param {object} routeObject - The base route object to use to create the route
  * @param {boolean} raw - If true, will return the raw url to the device, otherwise will return a complete route object
  * @param {object} routerInstance - Optional, only used if "raw", the router instance to use to resolve the url
- * @returns {*} - The generated route or link
+ * @return {*} - The generated route or link
  */
 export function getDeviceRoute(deviceId, type, routeObject, raw, routerInstance = null) {
     const query = routeObject.query;
@@ -80,7 +80,7 @@ export function getDeviceRoute(deviceId, type, routeObject, raw, routerInstance 
  * Generate an updated API URL for fetching ata
  * @param {object} stateParams - The state params to use to generate the URL
  * @param {string} type - The type of the data to fetch
- * @returns {string} - The generated API URL
+ * @return {string} - The generated API URL
  */
 export function getUpdatedApiUrl(stateParams, type) {
     let url = '';
@@ -120,7 +120,7 @@ export function getUpdatedApiUrl(stateParams, type) {
  * @param {string} type - The type of the device
  * @param {object} routeObject - The base route object to use to create the route
  * @param {object} routerInstance - The router instance to use to generate the route
- * @returns {string} - The generated anchor tag
+ * @return {string} - The generated anchor tag
  */
 export function generateDeviceAnchorLink(deviceId, label, type, routeObject, routerInstance) {
     const link = getDeviceRoute(deviceId, type, routeObject, true, routerInstance);
