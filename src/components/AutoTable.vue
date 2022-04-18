@@ -14,8 +14,7 @@
             disable-sort
             mobile-breakpoint="0"
             :disable-pagination="!this.isPaginated"
-            :hide-default-footer="!this.isPaginated"
-        >
+            :hide-default-footer="!this.isPaginated">
             <template v-slot:body="{ items, headers }">
                 <tbody>
                     <tr v-for="(item, itemIndex) in items" :key="itemIndex" :class="getRowClass(item)">
@@ -23,14 +22,12 @@
                             v-for="(header, headerIndex) in headers"
                             :key="headerIndex"
                             :title="header.columnDefinition.getTitle(item)"
-                            :class="getHeaderClassForItem(header, item)"
-                        >
+                            :class="getHeaderClassForItem(header, item)">
                             <span
                                 v-if="header.columnDefinition.isHtml"
                                 :title="header.columnDefinition.getTooltip(item[header.value], item)"
                                 :style="header.columnDefinition.getStyle(item[header.value], item)"
-                                v-html="header.columnDefinition.format(item[header.value], item)"
-                            ></span>
+                                v-html="header.columnDefinition.format(item[header.value], item)"></span>
                             <span
                                 v-else
                                 :title="header.columnDefinition.getTooltip(item[header.value], item)"
@@ -40,8 +37,7 @@
                             <span
                                 v-if="activeCopyCellContent && header.columnDefinition.format(item[header.value], item)"
                                 class="cp-span mdi mdi-content-copy"
-                                @click="copyCellContent(id, headerIndex, itemIndex, $event)"
-                            >
+                                @click="copyCellContent(id, headerIndex, itemIndex, $event)">
                                 <span class="cell-copied-tooltip">Copied!</span>
                             </span>
                         </td>

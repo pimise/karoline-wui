@@ -18,13 +18,5 @@ export default {
         ViewInventoryDevices,
         ViewInventoryFdb,
     },
-    computed: {
-        ...mapGetters(['storeEntity']),
-    },
-    beforeMount() {
-        /* redirect to the entity-picker if none is set, at least for now */
-        if (!this.storeEntity)
-            this.$router.push('/entity-picker');
-    },
 };
 </script>

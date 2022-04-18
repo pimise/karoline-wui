@@ -1,16 +1,15 @@
 <template>
     <div>
         <AutoTable
-            v-if="apiUrl !== '' && storeSearch !== ''"
+            v-if="apiUrl !== '' && apiStateParams.search !== ''"
             id="table-inventory-fdb"
             :isPaginated="true"
             :api="apiUrl"
             array-data=""
             height="auto"
             :height-offsets="[-120]"
-            :column-definition="columnDefinition"
-        />
-        <span v-if="storeSearch === ''">Please enter something to search</span>
+            :column-definition="columnDefinition" />
+        <span v-if="apiStateParams.search === ''">Please enter something to search</span>
     </div>
 </template>
 
@@ -101,40 +100,26 @@ export default {
             },
         };
     },
-    methods: {
-        updateApiUrl() {
-            const params = this.apiStateParams;
-            let url = '';
-
-            if (params.entity && params.database) {
-                url +=
-                    '/entity/' +
-                    encodeURIComponent(params.entity) +
-                    '/fdb?database=' +
-                    encodeURIComponent(params.database) +
-                    '&q=' +
-                    encodeURIComponent(params.search);
-            }
-
-            this.apiUrl = url;
-        },
-    },
     computed: {
-        ...mapGetters(['storeEntity', 'storeDatabase', 'storeSearch']),
         apiStateParams() {
             return {
-                entity: this.storeEntity,
-                database: this.storeDatabase,
-                search: this.storeSearch,
+                entity: this.$route.query.entity,
+                database: this.$route.query.db,
+                search: this.$route.query.search,
             };
         },
     },
     watch: {
-        apiStateParams(cur, prev) {
-            if (cur.entity !== prev.entity) {
-                return;
-            }
-            this.updateApiUrl();
+        apiStateParams: {
+            immediate: true,
+            handler(newParams, oldParams) {
+                /* On URL params changes, only fetch new data if the database or search params changed */
+                if (oldParams) {
+                    if (oldParams.database !== newParams.database || oldParams.search !== newParams.search) {
+                        this.apiUrl = this.$utils.getUpdatedApiUrl(newParams, 'fdb');
+                    }
+                }
+            },
         },
     },
     mounted() {

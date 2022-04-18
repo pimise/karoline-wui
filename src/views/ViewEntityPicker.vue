@@ -7,8 +7,7 @@
                     <img
                         class="py-1 pl-0 d-flex justify-start align-center"
                         src="assets/images/zenetys-fg-black-bg-full-transparent_LD.png"
-                        height="40"
-                    />
+                        height="40" />
                 </router-link>
             </v-toolbar-title>
             <v-spacer></v-spacer>
@@ -20,8 +19,7 @@
                 dark
                 x-small
                 color="primary"
-                class="view-type-button"
-            >
+                class="view-type-button">
                 <v-icon dark v-if="entityPickerDisplayMode === 'grid'"> mdi-table </v-icon>
                 <v-icon dark v-if="entityPickerDisplayMode === 'table'"> mdi-view-grid </v-icon>
             </v-btn>
@@ -40,8 +38,7 @@
                             outlined
                             dense
                             prepend-inner-icon="mdi-magnify"
-                            :hide-details="true"
-                        ></v-text-field>
+                            :hide-details="true"></v-text-field>
                     </v-col>
                 </v-row>
             </v-container>
@@ -65,15 +62,12 @@
                             sm="4"
                             md="3"
                             lg="2"
-                            xl="1"
-                        >
-                            <router-link class="entity" :to="'/main'">
+                            xl="1">
+                            <router-link class="entity" :to="'/main?entity=' + entity.name">
                                 <v-card
                                     class="d-flex align-center justify-center px-3 entity-card"
                                     color="secondary"
-                                    min-height="100"
-                                    @click="updateStoreEntity(entity.name)"
-                                >
+                                    min-height="100">
                                     <v-card-actions>
                                         <span class="entity-name"> {{ entity.name }}</span>
                                     </v-card-actions>
@@ -95,15 +89,13 @@
                                 :height="tableHeight"
                                 fixed-header
                                 :footer-props="entityTableProps.itemPerPageOptions"
-                                :items-per-page="-1"
-                            >
+                                :items-per-page="-1">
                                 <template
                                     v-for="(header, headerIndex) in headers"
-                                    v-slot:[`item.${header.value}`]="{ item }"
-                                >
+                                    v-slot:[`item.${header.value}`]="{ item }">
                                     <div :key="`entity-${headerIndex}`">
-                                        <router-link :to="'/main'">
-                                            <span v-if="header.value === 'name'" @click="updateStoreEntity(item.name)">
+                                        <router-link :to="'/main?' + item.name">
+                                            <span v-if="header.value === 'name'">
                                                 {{ item.name }}
                                             </span>
                                         </router-link>
@@ -141,7 +133,6 @@ a {
 
 <script>
 import Message from '@/components/Message.vue';
-import { mapActions, mapGetters } from 'vuex';
 
 export default {
     name: 'ViewEntityPicker',
@@ -160,7 +151,9 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['storeEntities']),
+        storeEntities() {
+            return this.$store.state.storeEntities;
+        },
         filteredEntities() {
             return this.storeEntities
                 .map((entity) => ({ name: entity }))
@@ -190,7 +183,6 @@ export default {
         this.setTableHeight();
         this.$refs.entitySearch.$refs.input.focus();
         window.addEventListener('resize', this.setTableHeight);
-        this.updateStoreSearch('');
     },
     destroyed() {
         window.removeEventListener('resize', this.setTableHeight);

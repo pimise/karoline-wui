@@ -11,8 +11,7 @@
                         scope="col"
                         v-for="formattedVlan in formattedVlans"
                         :key="formattedVlan.id"
-                        :class="'cell-' + formattedVlan.id"
-                    >
+                        :class="'cell-' + formattedVlan.id">
                         {{ formattedVlan.id }}
                     </th>
                 </tr>
@@ -26,8 +25,7 @@
                         class="vlan-number"
                         :class="'cell-' + vlan.id"
                         @mouseover="onOverCell(vlan.id)"
-                        @mouseout="onOutCell(vlan.id)"
-                    >
+                        @mouseout="onOutCell(vlan.id)">
                         {{ vlan.vlan.length }}
                     </td>
                     <td
@@ -35,12 +33,10 @@
                         :key="formattedVlan.id"
                         :class="getVlanClass(vlan, formattedVlan)"
                         @mouseover="onOverCell(formattedVlan.id)"
-                        @mouseout="onOutCell(formattedVlan.id)"
-                    >
+                        @mouseout="onOutCell(formattedVlan.id)">
                         <span
                             v-if="findMatchingVlan(vlan.vlan, formattedVlan)"
-                            :title="findMatchingVlan(vlan.vlan, formattedVlan).name"
-                        >
+                            :title="findMatchingVlan(vlan.vlan, formattedVlan).name">
                             {{ findMatchingVlan(vlan.vlan, formattedVlan).name }}
                         </span>
                     </td>
@@ -164,31 +160,42 @@ table {
 </style>
 
 <script>
-import { mapGetters } from 'vuex';
-
 export default {
     name: 'ViewVlanMatrix',
-    components: {},
     computed: {
-        ...mapGetters(['storeDatabase', 'storeEntity', 'storeSearch']),
         apiStateParams() {
             return {
-                entity: this.storeEntity,
-                database: this.storeDatabase,
-                search: this.storeSearch,
+                entity: this.$route.query.entity,
+                database: this.$route.query.db,
+                search: this.$route.query.search,
             };
+        },
+        storeEntityDatabases() {
+            return this.$store.state.storeEntityDatabases;
         },
     },
     watch: {
-        apiStateParams(cur, prev) {
-            if (this.storeDatabase) {
-                if (cur.database !== prev.database) {
+        apiStateParams: {
+            immediate: true,
+            handler(newParams, oldParams) {
+                if (oldParams) {
+                    if (oldParams.database !== newParams.database) {
+                        this.getVlans();
+                    }
+                }
+            },
+        },
+        storeEntityDatabases: {
+            immediate: true,
+            handler(newDatabases) {
+                if (
+                    this.apiStateParams.database &&
+                    newDatabases.length > 0 &&
+                    newDatabases.some((db) => db.id === this.apiStateParams.database)
+                ) {
                     this.getVlans();
                 }
-                if (cur.search !== prev.search) {
-                    this.$router.push('/main/inventory');
-                }
-            }
+            },
         },
     },
     data() {
@@ -332,7 +339,6 @@ export default {
         },
     },
     mounted() {
-        this.getVlans();
         this.setTableDimensions();
 
         window.addEventListener('resize', this.setTableDimensions);

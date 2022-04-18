@@ -9,8 +9,7 @@
         :height-offsets="[-120]"
         :column-definition="columnDefinition"
         :custom-headers-computation="computeHeaders"
-        @error="onError"
-    >
+        @error="onError">
     </auto-table>
 </template>
 
@@ -103,25 +102,17 @@ export default {
                             : '';
 
                         if (type) {
-                            if (type.includes('switch'))
-                                return '<span class="mdi mdi-swap-horizontal-bold"></span>';
-                            if (type.includes('router'))
-                                return '<span class="mdi mdi-router"></span>';
-                            if (type.includes('wlan'))
-                                return '<span class="mdi mdi-wifi"></span>';
-                            if (type.includes('phone'))
-                                return '<span class="mdi mdi-phone"></span>';
-                            if (type.includes('print'))
-                                return '<span class="mdi mdi-printer"></span>';
+                            if (type.includes('switch')) return '<span class="mdi mdi-swap-horizontal-bold"></span>';
+                            if (type.includes('router')) return '<span class="mdi mdi-router"></span>';
+                            if (type.includes('wlan')) return '<span class="mdi mdi-wifi"></span>';
+                            if (type.includes('phone')) return '<span class="mdi mdi-phone"></span>';
+                            if (type.includes('print')) return '<span class="mdi mdi-printer"></span>';
                         }
 
                         if (descr) {
-                            if (descr.includes('linux'))
-                                return '<span class="mdi mdi-linux"></span>';
-                            if (descr.includes('windows'))
-                                return '<span class="mdi mdi-microsoft-windows"></span>';
-                            if (descr.includes('print'))
-                                return '<span class="mdi mdi-printer"></span>';
+                            if (descr.includes('linux')) return '<span class="mdi mdi-linux"></span>';
+                            if (descr.includes('windows')) return '<span class="mdi mdi-microsoft-windows"></span>';
+                            if (descr.includes('print')) return '<span class="mdi mdi-printer"></span>';
                         }
 
                         return '<span class="mdi mdi-monitor-small"></span>';
@@ -257,26 +248,6 @@ export default {
     },
     methods: {
         /**
-         * Update the query api link to make the query
-         */
-        updateApiUrl() {
-            const params = this.apiStateParams;
-            let url = '';
-
-            if (params.entity && params.database) {
-                url +=
-                    '/entity/' +
-                    encodeURIComponent(params.entity) +
-                    '/devices?database=' +
-                    encodeURIComponent(params.database) +
-                    '&q=' +
-                    encodeURIComponent(params.search) +
-                    '&short';
-            }
-
-            this.apiUrl = url;
-        },
-        /**
          * Compute the headers
          * @param {array<object>} headers
          */
@@ -290,25 +261,50 @@ export default {
         onError(payload) {
             this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
         },
+        /**
+         * Fetch an anchor tag for a given device
+         * @param {string} deviceId - The device id
+         * @param {string} label - The label to display in the anchor tag
+         * @param {string} type - The type of the device
+         * @return {string} The anchor tag generated for the device
+         */
+        fetchDeviceAnchorTag(deviceId, label, type) {
+            return this.$utils.generateDeviceAnchorTag(deviceId, label, type, this.$route, this.$router);
+        },
     },
     computed: {
-        ...mapGetters(['storeEntity', 'storeDatabase', 'storeSearch']),
+        storeEntityDatabases() {
+            return this.$store.getters.storeEntityDatabases;
+        },
         apiStateParams() {
             return {
-                entity: this.storeEntity,
-                database: this.storeDatabase,
-                search: this.storeSearch,
+                entity: this.$route.query.entity,
+                database: this.$route.query.db,
+                search: this.$route.query.search,
             };
         },
     },
     watch: {
         apiStateParams: {
             immediate: true,
-            handler() {
-                this.updateApiUrl();
+            handler(newParams, oldParams) {
+                /* Fetch new inventory data if the database or the search query changed */
+                if (oldParams) {
+                    if (oldParams.database !== newParams.database || oldParams.search !== newParams.search) {
+                        this.apiUrl = this.$utils.getUpdatedApiUrl(newParams, 'devices');
+                    }
+                }
             },
         },
+        storeEntityDatabases: {
+            handler(newDatabases) {
+                /* When the entity DBs change, only fetch new inventory data if the current DB exists on this entity */
+                if (newDatabases?.some((db) => db.id === this.apiStateParams.database)) {
+                    this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'devices');
+                }
+            },
+            immediate: true,
+        },
     },
-    mounted() {},
 };
 </script>
