@@ -18,7 +18,9 @@
                 </tr>
                 <tr v-for="vlan in vlans" :key="vlan.id">
                     <th scope="row" class="font-weight-regular">
-                        <router-link :to="'/main/inventory/switch/' + vlan.id">{{ vlan.name }}</router-link>
+                        <router-link :to="$utils.getDeviceRoute(vlan.id, 'switch', $route, false)">
+                            {{ vlan.name }}
+                        </router-link>
                     </th>
                     <td
                         class="vlan-number"
@@ -232,11 +234,8 @@ export default {
          */
         getVlans() {
             this.isLoading = true;
-            const url =
-                '/entity/' +
-                encodeURIComponent(this.storeEntity) +
-                '/vlans?database=' +
-                encodeURIComponent(this.storeDatabase);
+
+            const url = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'vlans');
 
             this.$api
                 .get(url)

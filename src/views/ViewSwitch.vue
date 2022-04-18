@@ -5,9 +5,12 @@
                 <tr>
                     <th class="text-left px-2">Name</th>
                     <td class="text-left pl-2">
-                        <router-link :to="'/main/inventory/host/' + this.device.id" id="device-name">{{
-                            this.deviceName
-                        }}</router-link>
+                        <router-link
+                            :to="$utils.getDeviceRoute(this.device.id, 'host', $route, false)"
+                            id="device-name"
+                        >
+                            {{ this.deviceName }}
+                        </router-link>
                         <span class="secondary-names">{{ this.deviceSecondaryNames }}</span>
                     </td>
                 </tr>
@@ -183,7 +186,7 @@ export default {
         },
         ...mapGetters(['storeDatabase', 'storeEntity', 'storeSearch']),
         deviceName() {
-            return unArray(this.device.name);
+            return this.$utils.unArray(this.device.name);
         },
         deviceSecondaryNames() {
             if (Array.isArray(this.device.name) && this.device.name.length > 1)
@@ -191,7 +194,7 @@ export default {
             return '';
         },
         deviceDescription() {
-            return unArray(this.device.description);
+            return this.$utils.unArray(this.device.description);
         },
         deviceIp() {
             return Array.isArray(this.device.ip) ? this.device.ip.join(', ') : this.device.ip;

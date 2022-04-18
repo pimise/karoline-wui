@@ -122,7 +122,7 @@ export function getUpdatedApiUrl(stateParams, type) {
  * @param {object} routerInstance - The router instance to use to generate the route
  * @return {string} - The generated anchor tag
  */
-export function generateDeviceAnchorLink(deviceId, label, type, routeObject, routerInstance) {
+export function generateDeviceAnchorTag(deviceId, label, type, routeObject, routerInstance) {
     const link = getDeviceRoute(deviceId, type, routeObject, true, routerInstance);
     return ` <a href="${link}">${label}</a> `;
 }

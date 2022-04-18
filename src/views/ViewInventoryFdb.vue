@@ -39,7 +39,7 @@ export default {
                     hidden: true,
                 },
                 fdbMacDip: {
-                    format: unArray,
+                    format: this.$utils.unArray,
                     getTooltip: (input) => {
                         return input ? (Array.isArray(input) ? input.join('\n') : input) : '';
                     },
@@ -53,9 +53,14 @@ export default {
                      * @return {string} - The anchor tag for the switch name
                      */
                     format: (input, tableItem) => {
-                        input = unArray(input);
-
-                        return '<a href="#/main/inventory/switch/' + tableItem.swId + '"> ' + input + ' </a>';
+                        input = this.$utils.unArray(input);
+                        return this.$utils.generateDeviceAnchorTag(
+                            tableItem.swId,
+                            input,
+                            'switch',
+                            this.$route,
+                            this.$router
+                        );
                     },
                     isHtml: true,
                 },
@@ -66,20 +71,20 @@ export default {
                      * @return {string} - The anchor tag generated
                      */
                     format: (input) => {
-                        input = unArray(input);
+                        input = this.$utils.unArray(input);
 
                         let output = '';
 
                         if (input) {
                             output =
-                                '<a href="#/main/inventory/switch/' +
-                                input.id +
-                                '"> ' +
-                                input.name +
-                                '</a> ' +
-                                input.iface;
+                                this.$utils.generateDeviceAnchorTag(
+                                    input.id,
+                                    input.name,
+                                    'switch',
+                                    this.$route,
+                                    this.$router
+                                ) + input.iface;
                         }
-
                         return output;
                     },
                     getTooltip: (inputs) => {
@@ -133,7 +138,7 @@ export default {
         },
     },
     mounted() {
-        this.updateApiUrl();
+        this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'fdb');
     },
 };
 </script>
