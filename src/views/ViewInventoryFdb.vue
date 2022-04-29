@@ -122,7 +122,7 @@ export default {
             },
         },
     },
-    mounted() {
+    beforeMount() {
         this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'fdb');
     },
 };
