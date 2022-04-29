@@ -1,7 +1,7 @@
 <template>
     <div>
         <AutoTable
-            v-if="apiUrl !== '' && apiStateParams.search !== ''"
+            v-if="apiUrl && apiStateParams.search"
             id="table-inventory-fdb"
             :isPaginated="true"
             :api="apiUrl"
@@ -9,7 +9,7 @@
             height="auto"
             :height-offsets="[-120]"
             :column-definition="columnDefinition" />
-        <span v-if="apiStateParams.search === ''">Please enter something to search</span>
+        <span v-if="!apiStateParams.search">Please enter something to search</span>
     </div>
 </template>
 
