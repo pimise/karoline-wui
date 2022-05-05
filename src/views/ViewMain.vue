@@ -242,7 +242,6 @@ a {
 </style>
 
 <script>
-import { mapActions } from 'vuex';
 import TimeLine from '@/components/TimeLine.vue';
 import Message from '@/components/Message.vue';
 
@@ -290,7 +289,7 @@ export default {
     },
     computed: {
         storeEntities() {
-            return this.$store.state.storeEntities;
+            return this.$mystore.getEntities();
         },
         routeEntity() {
             return this.$route.query.entity;
@@ -306,18 +305,18 @@ export default {
         },
         storeInventoryMode: {
             get() {
-                return this.$store.getters.storeInventoryMode;
+                return this.$mystore.getInventoryMode();
             },
             set(newInventoryMode) {
-                this.$store.commit('EDIT_STORE_INVENTORY_MODE', newInventoryMode);
+                return this.$mystore.setInventoryMode(newInventoryMode);
             },
         },
         storeEntityDatabases: {
             get() {
-                return this.$store.state.storeEntityDatabases;
+                return this.$mystore.getEntityDatabases();
             },
-            set(newEntityDatabases) {
-                this.$store.commit('EDIT_STORE_ENTITY_DATABASES', newEntityDatabases);
+            set(newDatabases) {
+                this.$mystore.setEntityDatabases(newDatabases);
             },
         },
         /**
@@ -330,7 +329,6 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['updateStoreInfoMessage']),
         /**
          * Run a new search query on a middlemouse click (paste) in the search input
          */
@@ -349,8 +347,7 @@ export default {
          * @param {*} payload - error payload
          */
         onError(payload) {
-            this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
-            console.log(this.$store.state.storeInfoMessage);
+            this.$mystore.setInfoMessage(payload);
         },
         /**
          * Toggle the persistence of the search query upon navigation
@@ -556,11 +553,12 @@ export default {
                 .get(`/entity/${this.routeEntity}/databases`)
                 .then((response) => response.data)
                 .catch((err) => {
-                    this.updateStoreInfoMessage({
+                    const message = {
                         type: 'error',
                         content: 'Cannot load databases, problem with the query.',
                         error: err,
-                    });
+                    };
+                    this.$mystore.setInfoMessage(message);
                     return null;
                 });
         },
