@@ -259,7 +259,7 @@ export default {
          * @param {object} payload
          */
         onError(payload) {
-            this.$store.commit('EDIT_STORE_INFO_MESSAGE', payload);
+            this.$mystore.setInfoMessage(payload);
         },
         /**
          * Fetch an anchor tag for a given device
@@ -274,7 +274,7 @@ export default {
     },
     computed: {
         storeEntityDatabases() {
-            return this.$store.getters.storeEntityDatabases;
+            return this.$mystore.getEntityDatabases();
         },
         apiStateParams() {
             return {
@@ -297,13 +297,13 @@ export default {
             },
         },
         storeEntityDatabases: {
+            immediate: true,
             handler(newDatabases) {
                 /* When the entity DBs change, only fetch new inventory data if the current DB exists on this entity */
                 if (newDatabases?.some((db) => db.id === this.apiStateParams.database)) {
                     this.apiUrl = this.$utils.getUpdatedApiUrl(this.apiStateParams, 'devices');
                 }
             },
-            immediate: true,
         },
     },
 };

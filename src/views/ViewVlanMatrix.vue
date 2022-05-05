@@ -171,7 +171,7 @@ export default {
             };
         },
         storeEntityDatabases() {
-            return this.$store.state.storeEntityDatabases;
+            return this.$mystore.getEntityDatabases();
         },
     },
     watch: {
@@ -262,11 +262,12 @@ export default {
                 })
                 .catch((error) => {
                     console.log(error);
-                    this.$store.commit('EDIT_STORE_INFO_MESSAGE', {
+                    const message = {
                         type: 'error',
                         content: 'Can not load vlans, problem with the query.',
                         error: error,
-                    });
+                    };
+                    this.$mystore.setInfoMessage(message);
                 });
         },
         /**

@@ -201,7 +201,7 @@ export default {
             return Array.isArray(this.device.ip) ? this.device.ip.join(', ') : this.device.ip;
         },
         storeEntityDatabases() {
-            return this.$store.state.storeEntityDatabases;
+            return this.$mystore.entityDatabases;
         },
     },
     methods: {
@@ -218,11 +218,12 @@ export default {
                 })
                 .catch((error) => {
                     console.log(error);
-                    this.$store.commit('EDIT_STORE_INFO_MESSAGE', {
+                    const message = {
                         type: 'error',
                         content: 'Cannot load device informations, problem with the query.',
                         error: error,
-                    });
+                    };
+                    this.$mystore.setInfoMessage(message);
                 });
         },
         /**

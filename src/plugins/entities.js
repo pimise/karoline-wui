@@ -1,5 +1,5 @@
 import Api from '@/plugins/api';
-import store from '@/store';
+import MyStore from '@/plugins/myStore';
 
 export default {
     /**
@@ -9,17 +9,16 @@ export default {
     async fetchStoreEntities() {
         await Api.get('/entities')
             .then((response) => {
-                store.commit('EDIT_STORE_ENTITIES', response.data);
-                store.commit('EDIT_STORE_INFO_MESSAGE', {});
+                MyStore.setEntities(response.data);
             })
             .catch((error) => {
                 console.log('Error fetching entities :', error);
-
-                store.commit('EDIT_STORE_INFO_MESSAGE', {
+                const message = {
                     type: 'error',
                     content: 'Can not retrieve entities. Problem with query.',
                     error: error,
-                });
+                };
+                MyStore.setInfoMessage(message);
             });
     },
 };
